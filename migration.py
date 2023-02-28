@@ -19,11 +19,17 @@ def get_playlists(sp):
 
 # Get playlist tracks from Spotify
 def get_tracks(playlist):
-    tr_list = sp.user_playlist_tracks(playlist['owner'], playlist['id'])
+    offset = 0
     tracks = []
-    for item in (tr_list['items']):
-        track = item['track']
-        tracks.append({'name': track['name'], 'artist': list(track['artists'][0].values())[3]})
+    while True:
+        tr_list = sp.user_playlist_tracks(playlist['owner'], playlist['id'], None, 100, offset)
+        size_returned = len(tr_list['items'])
+        if size_returned == 0:
+            break
+        offset += size_returned
+        for item in (tr_list['items']):
+            track = item['track']
+            tracks.append({'name': track['name'], 'artist': list(track['artists'][0].values())[3]})
     return(tracks)
 
 # Find tracks in Youtube
